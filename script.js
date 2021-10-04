@@ -9,12 +9,14 @@ let secondSlicer = 5;
 let arrayOfItems = new Array();
 let numOfPages;
 
+
 // DOM Variables
 const nextButton = document.getElementById("next");
 const lastButton = document.getElementById("last");
 const prevButton = document.getElementById("prev");
 const firstButton = document.getElementById("first");
 const ul = document.getElementById("list");
+const para = document.getElementById('pages');
 
 
 const initArray = () => {
@@ -57,6 +59,11 @@ const init = () => {
     outputArray(sliceArray(arrayOfItems,firstSlicer,secondSlicer))
     buttonDisabled(prevButton, true);
     buttonDisabled(firstButton, true);
+    setPara();
+}
+
+const setPara = () => {
+    para.textContent = `page ${currentPage} of ${numOfPages}`
 }
 
 
@@ -76,6 +83,7 @@ const nextButtonClicked = () => {
     currentPage++;
     buttonDisabled(prevButton,false);
     buttonDisabled(firstButton, false);
+    setPara();
 
 }
 
@@ -93,6 +101,7 @@ const prevButtonClicked = () => {
     updateSlicers(negItemsPerPage)
     outputArray(sliceArray(arrayOfItems,firstSlicer,secondSlicer));
     currentPage--;
+    setPara();
 }
 
 const firstButtonClicked = () => {
@@ -106,6 +115,7 @@ const firstButtonClicked = () => {
     firstSlicer = 0;
     secondSlicer = 5;
     outputArray(sliceArray(arrayOfItems, firstSlicer,secondSlicer))
+    setPara();
 }
 
 const lastButtonClicked = () => {
@@ -118,6 +128,7 @@ const lastButtonClicked = () => {
     firstSlicer = arrayOfItems.length - 5;
     secondSlicer = arrayOfItems.length;
     outputArray(sliceArray(arrayOfItems, firstSlicer,secondSlicer))
+    setPara();
 
 }
 
