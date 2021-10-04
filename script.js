@@ -1,109 +1,135 @@
-// GLOBAL VARIABLES
-let listOfItems = new Array();
-let numOfItemsOnPage = 10;
+(function () {
+  
+// Variables
+let currentPage = 1; 
+const itemsPerPage = 5; 
+const negItemsPerPage = -5;
 let firstSlicer = 0;
-let secondSlicer = firstSlicer + numOfItemsOnPage; 
-let currentPage = 1;
+let secondSlicer = 5;
+let arrayOfItems = new Array();
 let numOfPages;
 
-// BUTTON VARIABLES 
-const nextButton = document.getElementById('next');
-const lastButton = document.getElementById('last');
-const prevButton = document.getElementById('prev');
-const firstButton = document.getElementById('first');
+// DOM Variables
+const nextButton = document.getElementById("next");
+const lastButton = document.getElementById("last");
+const prevButton = document.getElementById("prev");
+const firstButton = document.getElementById("first");
+const ul = document.getElementById("list");
 
-/// Function to make list
-const makeList = () => {
-    for (let i = 0; i < 200; i++) {
-        listOfItems.push(i);
+
+const initArray = () => {
+    for (let i = 1; i < 51; i++) {
+        arrayOfItems.push(i);     
+    }
+    numOfPages = (arrayOfItems.length / itemsPerPage);
+}
+
+const buttonDisabled = (element, bool) => {
+    element.disabled = bool;
+}
+
+const sliceArray = (array, slicer1, slicer2) => {
+    console.log(array.slice(slicer1,slicer2))
+    return array.slice(slicer1, slicer2);
+}
+
+const outputArray = (array) => {
+    for (let i = 0; i < array.length; i++) {
+        let li = document.createElement("li");
+        li.innerHTML = array[i];
+        li.classList.add("list__item")
+        ul.appendChild(li);
     }
 }
 
-//function to calculate num of Pages
-const calcPages = () => {
-    numOfPages = Math.ceil(listOfItems.length / numOfItemsOnPage)
+const removeChildren = () => {
+    const children = ul.querySelectorAll('*')
+    children.forEach(node => node.remove())
 }
 
-const initialSclice = () => {
-    const list = document.getElementById("list");
-    for (let i = 0; i < numOfItemsOnPage; i++) {
-        let item = document.createElement('li');
-        item.classList.add('list__item')
-        item.innerHTML = listOfItems[i];
-        list.appendChild(item);
-    }
+const updateSlicers = (num) => {
+    firstSlicer+=num;
+    secondSlicer+=num;
 }
 
-// load function 
-const load = () => {
-    makeList();
-    calcPages();
-    initialSclice();
+const init = () => {
+    initArray();
+    outputArray(sliceArray(arrayOfItems,firstSlicer,secondSlicer))
+    buttonDisabled(prevButton, true);
+    buttonDisabled(firstButton, true);
 }
 
-// Event Listener TO LOAD LIST
-window.addEventListener("load", load());
-
-//EVENT LISTENERS FOR BUTTON CLICKS
-
-
-
-// EVENT FUNCTIONS
 
 const nextButtonClicked = () => {
-    // check to make sure it's not on last page 
-    if (checkIfLastPage) {
-       currentPage++
-       adjustSlicers(10)
-       console.log(firstSlicer, secondSlicer, currentPage)
-       console.log(sliceArray(listOfItems, firstSlicer, secondSlicer))
-
+    if (currentPage === (numOfPages - 1) ) {
+        buttonDisabled(nextButton, true);
+        buttonDisabled(lastButton, true);
     }
-}
 
-const lastButtonClicked = () => {
+    if (currentPage === 1) {
+        buttonDisabled(prevButton,false);
+        buttonDisabled(firstButton, false)
+    }
+    removeChildren();
+    updateSlicers(itemsPerPage)
+    outputArray(sliceArray(arrayOfItems,firstSlicer,secondSlicer));
+    currentPage++;
+    buttonDisabled(prevButton,false);
+    buttonDisabled(firstButton, false);
 
 }
 
 const prevButtonClicked = () => {
+    if (currentPage === 2) {
+        buttonDisabled(prevButton, true);
+        buttonDisabled(firstButton, true);
+    }
+    if (currentPage === numOfPages) {
+        buttonDisabled(nextButton, false);
+        buttonDisabled(lastButton, false)
+    }
 
+    removeChildren();
+    updateSlicers(negItemsPerPage)
+    outputArray(sliceArray(arrayOfItems,firstSlicer,secondSlicer));
+    currentPage--;
 }
 
 const firstButtonClicked = () => {
+    removeChildren();
+    currentPage = 1;
+    buttonDisabled(prevButton, true);
+    buttonDisabled(firstButton, true);
+    buttonDisabled(nextButton, false);
+    buttonDisabled(lastButton, false);
+
+    firstSlicer = 0;
+    secondSlicer = 5;
+    outputArray(sliceArray(arrayOfItems, firstSlicer,secondSlicer))
+}
+
+const lastButtonClicked = () => {
+    removeChildren();
+    currentPage = numOfPages;
+    buttonDisabled(nextButton, true);
+    buttonDisabled(lastButton, true);
+    buttonDisabled(prevButton, false);
+    buttonDisabled(firstButton, false);
+    firstSlicer = arrayOfItems.length - 5;
+    secondSlicer = arrayOfItems.length;
+    outputArray(sliceArray(arrayOfItems, firstSlicer,secondSlicer))
 
 }
 
-//Next Button Event Listener
-nextButton.addEventListener('click', nextButtonClicked)
-lastButton.addEventListener('click', lastButtonClicked)
-prevButton.addEventListener('click', prevButtonClicked)
+
+
+window.addEventListener('load', init);
+
+nextButton.addEventListener('click', nextButtonClicked);
+prevButton.addEventListener('click', prevButtonClicked);
+lastButton.addEventListener('click', lastButtonClicked);
 firstButton.addEventListener('click', firstButtonClicked)
 
 
-
-//HELPER FUNCTIONS 
-const adjustSlicers = (numToAdd) => {
-    firstSlicer += numToAdd;
-    secondSlicer += numToAdd;
-
-    // return [firstSlicer, secondSlicer];
-}
-
-// Function to slice array 
-const sliceArray = (array, firstSlicerParam, secondSlicerParam) => {
-    return array.slice(firstSlicerParam,secondSlicerParam);
-}
-
-// function to check if on last page 
-const checkIfLastPage = () => {
-    let numOfPages = Math.ceil(listOfItems.length / numOfItemsOnPage)
-    console.log(numOfPages);
-    console.log(currentPage);
-    if (currentPage === numOfPages) {
-        return true;    
-    } else {
-        return false;
-    }
-}
-
+})();
 
